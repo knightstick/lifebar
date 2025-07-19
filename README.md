@@ -15,7 +15,7 @@ A gamified approach to managing recurring tasks with visual "needs bars" similar
 
 - Ruby 3.4.5
 - Rails 8.0.2
-- MySQL (for production) or SQLite (for testing)
+- MySQL (for production and testing)
 - Node.js (for asset compilation)
 
 ### Installation
@@ -65,7 +65,7 @@ bundle exec rspec
 
 ### Tech Stack
 - **Framework**: Ruby on Rails 8.0.2
-- **Database**: MySQL (production), SQLite (test)
+- **Database**: MySQL (production and test)
 - **Frontend**: Turbo + Stimulus + Tailwind CSS
 - **Testing**: Cucumber (BDD) + RSpec (unit/integration)
 - **Deployment**: Railway (planned)

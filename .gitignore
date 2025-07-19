@@ -64,5 +64,5 @@ yarn-debug.log*
 # Ignore coverage reports
 /coverage/
 
-# Ignore test database
-/db/test.sqlite3
+# Ignore SQLite databases (if used locally)
+*.sqlite3

@@ -72,7 +72,7 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 
-  # SQLite for fast test database
+  # SQLite for local development convenience (optional)
   gem "sqlite3"
 
   # Database cleaner for Cucumber feature specs
