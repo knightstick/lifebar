@@ -50,8 +50,18 @@ Ready for task X+1: [Next task description]
 - Example: `feature/visual-status-bars`
 
 ### After User Merges PR
-Only after user has merged the PR, return to main branch and pull latest:
+Only after user confirms the PR has been merged, clean up by:
+1. Return to main branch and pull latest changes:
 ```bash
 git checkout main
 git pull origin main
 ```
+2. Delete the local feature branch (if it still exists):
+```bash
+git branch -d feature/branch-name
+```
+
+### Cleanup Instructions
+- Wait for user to explicitly tell you "it's merged" or similar confirmation
+- Only then perform the cleanup steps above
+- This ensures we're always working from the latest main branch for the next task
