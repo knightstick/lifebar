@@ -18,7 +18,7 @@
   - Make Cucumber feature pass with working create task flow
   - _Requirements: 1.1, 1.2, 1.5_
 
-- [ ] 3. Verify deployment and database connectivity (manual verification)
+- [x] 3. Verify deployment and database connectivity (manual verification)
   - Run application locally in development mode and verify task creation works
   - Run database migrations in development: `rails db:migrate`
   - Test full task creation flow manually in browser
@@ -100,3 +100,11 @@
   - Ensure mobile-responsive design across all views
   - Make all Cucumber features pass with polished user experience
   - _Requirements: 1.4, 4.4, 5.4 - validation and error handling aspects_
+
+- [ ] 12. Rotate Railway secrets for security (manual security task)
+  - Generate new SECRET_KEY_BASE that Kiro doesn't know
+  - Rotate MySQL database password through Railway dashboard
+  - Update DATABASE_URL with new credentials
+  - Verify application still works after secret rotation
+  - Document secret rotation process for future maintenance
+  - _Requirements: Security best practice - ensure AI doesn't have access to production secrets_
