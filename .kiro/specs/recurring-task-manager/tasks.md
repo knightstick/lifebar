@@ -18,7 +18,17 @@
   - Make Cucumber feature pass with working create task flow
   - _Requirements: 1.1, 1.2, 1.5_
 
-- [ ] 3. User can view their tasks on a dashboard
+- [x] 3. Verify deployment and database connectivity (manual verification)
+  - Run application locally in development mode and verify task creation works
+  - Run database migrations in development: `rails db:migrate`
+  - Test full task creation flow manually in browser
+  - Deploy current state to Railway with PlanetScale database
+  - Verify Railway deployment is accessible and functional
+  - Test task creation in production environment
+  - Confirm database connectivity and data persistence in production
+  - _Requirements: Deployment verification before continuing with features_
+
+- [ ] 4. User can view their tasks on a dashboard
   - Write Cucumber feature: "User can see list of their created tasks"
   - Create tasks index view showing task names and creation dates
   - Add navigation from homepage to task dashboard
@@ -27,7 +37,7 @@
   - Make Cucumber feature pass with working task list display
   - _Requirements: 2.1, 2.6_
 
-- [ ] 4. User can create tasks with different intervals
+- [ ] 5. User can create tasks with different intervals
   - Write Cucumber feature: "User can create daily, weekly, monthly, and custom interval tasks"
   - Add interval_type enum to Task model (daily, weekly, monthly, custom)
   - Add interval_value field for custom intervals
@@ -36,7 +46,7 @@
   - Make Cucumber feature pass with all interval types working
   - _Requirements: 1.1, 1.2, 1.3, 1.4_
 
-- [ ] 5. User can see basic task status (without visual bars yet)
+- [ ] 6. User can see basic task status (without visual bars yet)
   - Write Cucumber feature: "User can see if tasks are due, overdue, or recently completed"
   - Add last_completed_at field to Task model
   - Implement next_due_date and overdue? methods on Task model
@@ -45,7 +55,7 @@
   - Make Cucumber feature pass with working status display
   - _Requirements: 6.1, 6.6_
 
-- [ ] 6. User can mark tasks as complete
+- [ ] 7. User can mark tasks as complete
   - Write Cucumber feature: "User can mark a task complete and see it reset"
   - Create TaskCompletion model and migration
   - Add complete action to TasksController
@@ -55,7 +65,7 @@
   - Make Cucumber feature pass with working task completion
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
 
-- [ ] 7. User can see visual status bars (Sims-style)
+- [ ] 8. User can see visual status bars (Sims-style)
   - Write Cucumber feature: "User sees green-to-red status bars that change over time"
   - Implement completion_percentage and status_color methods on Task model
   - Create CSS classes for status bar gradients (green/yellow/red)
@@ -64,7 +74,7 @@
   - Make Cucumber feature pass with working visual status bars
   - _Requirements: 2.2, 2.3, 2.4, 2.5, 6.2, 6.3, 6.4, 6.5_
 
-- [ ] 8. User can edit existing tasks
+- [ ] 9. User can edit existing tasks
   - Write Cucumber feature: "User can edit task name and interval"
   - Add edit/update actions to TasksController
   - Create task edit form with pre-populated values
@@ -73,7 +83,7 @@
   - Make Cucumber feature pass with working task editing
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
 
-- [ ] 9. User can delete tasks they no longer need
+- [ ] 10. User can delete tasks they no longer need
   - Write Cucumber feature: "User can delete a task with confirmation"
   - Add destroy action to TasksController with confirmation
   - Add "Delete" link with JavaScript confirmation dialog
@@ -82,7 +92,7 @@
   - Make Cucumber feature pass with working task deletion
   - _Requirements: 5.1, 5.2, 5.3, 5.4_
 
-- [ ] 10. Polish user experience and handle edge cases
+- [ ] 11. Polish user experience and handle edge cases
   - Write Cucumber features for error scenarios and validation
   - Add comprehensive form validation with user-friendly error messages
   - Implement 404 handling for non-existent tasks
@@ -90,3 +100,11 @@
   - Ensure mobile-responsive design across all views
   - Make all Cucumber features pass with polished user experience
   - _Requirements: 1.4, 4.4, 5.4 - validation and error handling aspects_
+
+- [ ] 12. Rotate Railway secrets for security (manual security task)
+  - Generate new SECRET_KEY_BASE that Kiro doesn't know
+  - Rotate MySQL database password through Railway dashboard
+  - Update DATABASE_URL with new credentials
+  - Verify application still works after secret rotation
+  - Document secret rotation process for future maintenance
+  - _Requirements: Security best practice - ensure AI doesn't have access to production secrets_
