@@ -71,20 +71,15 @@ Given('I have a task {string} with {string} interval that was never completed') 
 end
 
 Then('I should see {string} with status {string}') do |task_name, status|
-  puts "DEBUG: Looking for task '#{task_name}' with status '#{status}'"
-  puts "DEBUG: Page has content: #{page.has_content?(task_name)}"
-  puts "DEBUG: Page has data-task-name: #{page.has_css?("[data-task-name='#{task_name}']")}"
   within("[data-task-name='#{task_name}']") do
     expect(page).to have_content(status)
   end
 end
 
 Then('I should see green status color for {string}') do |task_name|
-  task_element = page.find("[data-task-name='#{task_name}']")
-  puts "DEBUG: Raw HTML for #{task_name}:"
-  puts task_element['innerHTML']
-  puts "DEBUG: Looking for .status-green class within task element"
-  expect(task_element).to have_css('.status-green')
+  within("[data-task-name='#{task_name}']") do
+    expect(page).to have_css('.status-green')
+  end
 end
 
 Then('I should see yellow status color for {string}') do |task_name|

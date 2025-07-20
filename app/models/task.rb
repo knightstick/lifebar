@@ -68,9 +68,9 @@ class Task < ApplicationRecord
   def status_color_class
     time_diff = next_due_date - Time.current
 
-    if time_diff <= 0
+    if time_diff < 0
       "status-red"
-    elsif time_diff <= 1.day
+    elsif time_diff < 1.day
       "status-yellow"
     else
       "status-green"

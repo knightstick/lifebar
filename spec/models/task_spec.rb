@@ -187,9 +187,14 @@ RSpec.describe Task, type: :model do
       expect(task.status_color_class).to eq("status-yellow")
     end
 
-    it "returns yellow for tasks due exactly in one day" do
-      task = Task.new(interval_type: "daily", last_completed_at: Time.current)
+    it "returns yellow for tasks due exactly now" do
+      task = Task.new(interval_type: "daily", last_completed_at: 1.day.ago)
       expect(task.status_color_class).to eq("status-yellow")
+    end
+
+    it "returns green for tasks due exactly in one day" do
+      task = Task.new(interval_type: "daily", last_completed_at: Time.current)
+      expect(task.status_color_class).to eq("status-green")
     end
 
     it "returns green for tasks due in more than a day" do
