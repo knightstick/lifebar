@@ -16,7 +16,7 @@
         <% @tasks.each do |task| %>
           <div class="bg-white rounded-lg shadow-md p-6">
             <h3 class="text-lg font-semibold text-gray-900"><%= task.name %></h3>
-            <p class="text-gray-600">Interval: <%= task.interval_type.capitalize %></p>
+            <p class="text-gray-600">Interval: <%= task.interval_display %></p>
             <p class="text-gray-500 text-sm">Created: <%= task.created_at.strftime("%B %d, %Y") %></p>
           </div>
         <% end %>

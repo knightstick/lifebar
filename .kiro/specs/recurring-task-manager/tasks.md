@@ -28,7 +28,7 @@
   - Confirm database connectivity and data persistence in production
   - _Requirements: Deployment verification before continuing with features_
 
-- [ ] 4. User can view their tasks on a dashboard
+- [x] 4. User can view their tasks on a dashboard
   - Write Cucumber feature: "User can see list of their created tasks"
   - Create tasks index view showing task names and creation dates
   - Add navigation from homepage to task dashboard
@@ -37,7 +37,7 @@
   - Make Cucumber feature pass with working task list display
   - _Requirements: 2.1, 2.6_
 
-- [ ] 5. User can create tasks with different intervals
+- [x] 5. User can create tasks with different intervals
   - Write Cucumber feature: "User can create daily, weekly, monthly, and custom interval tasks"
   - Add interval_type enum to Task model (daily, weekly, monthly, custom)
   - Add interval_value field for custom intervals
