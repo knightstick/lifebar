@@ -26,11 +26,10 @@ RSpec.describe Task, type: :model do
     end
   end
 
-  describe "before_create callback" do
-    it "sets initial completion time" do
+  describe "initial state" do
+    it "starts as not completed" do
       task = Task.create!(name: "Test task", interval_type: "weekly")
-      expect(task.last_completed_at).to be_present
-      expect(task.last_completed_at).to be_within(1.second).of(Time.current)
+      expect(task.last_completed_at).to be_nil
     end
   end
 end
