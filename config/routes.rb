@@ -11,4 +11,7 @@ Rails.application.routes.draw do
 
   # Homepage
   root "home#index"
+
+  # Tasks
+  resources :tasks, only: [:new, :create, :index]
 end

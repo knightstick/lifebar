@@ -9,7 +9,7 @@
   - Write passing Cucumber feature: "User can visit homepage"
   - _Requirements: Foundation for all subsequent features_
 
-- [ ] 2. User can create a basic task (end-to-end slice)
+- [x] 2. User can create a basic task (end-to-end slice)
   - Write Cucumber feature: "User can create a task with name and weekly interval"
   - Create Task model, migration, and validations (driven by failing feature)
   - Create TasksController with new/create actions
