@@ -2,7 +2,7 @@
   <div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
     <h1 class="text-2xl font-bold text-gray-900 mb-6">Create New Task</h1>
 
-    <%= form_with model: @task, local: true, class: "space-y-4" do |form| %>
+    <%= form_with model: @task, local: true, class: "space-y-4", data: { controller: "interval" } do |form| %>
       <% if @task.errors.any? %>
         <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
           <ul>
@@ -24,10 +24,18 @@
             options_for_select([
               ["Daily", "daily"],
               ["Weekly", "weekly"],
-              ["Monthly", "monthly"]
+              ["Monthly", "monthly"],
+              ["Custom", "custom"]
             ], "weekly"),
             {},
-            { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" } %>
+            { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500",
+              data: { interval_target: "select", action: "change->interval#change" } } %>
+      </div>
+
+      <div data-interval-target="customField" class="hidden">
+        <%= form.label :interval_value, "Custom Days", class: "block text-sm font-medium text-gray-700" %>
+        <%= form.number_field :interval_value, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500",
+            placeholder: "Enter number of days" %>
       </div>
 
       <div class="flex gap-4">

@@ -65,3 +65,71 @@ git branch -d feature/branch-name
 - Wait for user to explicitly tell you "it's merged" or similar confirmation
 - Only then perform the cleanup steps above
 - This ensures we're always working from the latest main branch for the next task
+
+## Reading and Addressing PR Review Feedback
+
+### When User Says "I left a comment on the PR"
+
+1. **Read PR Reviews and Comments** using GitHub CLI:
+```bash
+# Check for review comments (inline code comments)
+gh api repos/OWNER/REPO/pulls/PR_NUMBER/comments
+
+# Check for general PR reviews
+gh api repos/OWNER/REPO/pulls/PR_NUMBER/reviews
+```
+
+2. **Parse the Feedback**: Look for the `body` field in the JSON response which contains the actual comment text
+
+3. **Address Each Comment**:
+   - Make the requested code changes
+   - Improve code quality, naming, or approach as suggested
+   - Add tests if requested
+   - Update documentation if needed
+
+4. **Commit and Push Changes**:
+```bash
+git add .
+git commit -m "Address PR review feedback: [brief description of changes]"
+git push origin feature-branch-name
+```
+
+5. **Verify Changes**: Ensure all tests still pass after addressing feedback:
+```bash
+bundle exec cucumber && bundle exec rspec
+```
+
+### Example Review Comment Scenarios
+
+**Code Quality Issues**:
+- Improve variable/method naming
+- Refactor complex logic
+- Add missing validations
+- Fix linting issues
+
+**Test-Related Feedback**:
+- Improve test selectors (e.g., use semantic data attributes instead of CSS classes)
+- Add missing test scenarios
+- Make tests more reliable or maintainable
+
+**Architecture/Design Feedback**:
+- Refactor to follow better patterns
+- Improve separation of concerns
+- Enhance error handling
+
+### Best Practices for Addressing Feedback
+
+1. **Be Responsive**: Address feedback promptly and thoroughly
+2. **Ask for Clarification**: If feedback is unclear, ask specific questions
+3. **Test Thoroughly**: Always run full test suite after making changes
+4. **Document Changes**: Use clear commit messages explaining what was addressed
+5. **Maintain Functionality**: Ensure changes don't break existing features
+
+### Communication Pattern
+
+When user says they left feedback:
+1. Use `gh api` commands to read the actual comments
+2. Acknowledge what you found: "I see your comment about [specific issue]"
+3. Explain your planned approach to address it
+4. Make the changes and commit with descriptive messages
+5. Confirm the feedback has been addressed

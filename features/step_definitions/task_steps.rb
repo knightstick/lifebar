@@ -43,3 +43,9 @@ end
 Then('I should see my task list') do
   expect(page).to have_content("My Tasks")
 end
+
+Then('I should see {string} as the interval for {string}') do |interval, task_name|
+  within("[data-task-name='#{task_name}']") do
+    expect(page).to have_content(interval)
+  end
+end
