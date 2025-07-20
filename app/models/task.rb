@@ -4,18 +4,18 @@ class Task < ApplicationRecord
   validates :interval_value, presence: true, numericality: { greater_than: 0 }, if: :custom_interval?
 
   def custom_interval?
-    interval_type == 'custom'
+    interval_type == "custom"
   end
 
   def interval_display
     case interval_type
-    when 'daily'
-      'Daily'
-    when 'weekly'
-      'Weekly'
-    when 'monthly'
-      'Monthly'
-    when 'custom'
+    when "daily"
+      "Daily"
+    when "weekly"
+      "Weekly"
+    when "monthly"
+      "Monthly"
+    when "custom"
       "Every #{interval_value} days"
     end
   end
