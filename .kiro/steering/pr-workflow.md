@@ -35,14 +35,12 @@ Ready for task X+1: [Next task description]
 1. Ensure all tests pass: `bundle exec cucumber && bundle exec rspec`
 2. Push branch: `git push origin feature-branch-name`
 3. Create PR: `gh pr create --title "Task Title" --body "Description"`
-4. Merge when ready: `gh pr merge --squash --delete-branch`
+4. **STOP** - Let user review and merge the PR
 
-### Auto-merge for Simple Tasks
-For straightforward implementations with passing tests:
-```bash
-gh pr create --title "Task Title" --body "Description"
-gh pr merge --squash --delete-branch
-```
+### Important Notes
+- **NEVER merge PRs automatically** - only the user should merge PRs
+- After creating PR, inform user it's ready for review
+- Wait for user to merge before proceeding to next task
 
 ## Branch Management
 
@@ -51,8 +49,8 @@ gh pr merge --squash --delete-branch
 - Example: `feature/create-basic-task`
 - Example: `feature/visual-status-bars`
 
-### After Merge
-Always return to main branch and pull latest:
+### After User Merges PR
+Only after user has merged the PR, return to main branch and pull latest:
 ```bash
 git checkout main
 git pull origin main
