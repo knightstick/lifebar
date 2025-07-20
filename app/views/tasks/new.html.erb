@@ -1,0 +1,39 @@
+<div class="min-h-screen bg-gray-50 py-12">
+  <div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
+    <h1 class="text-2xl font-bold text-gray-900 mb-6">Create New Task</h1>
+
+    <%= form_with model: @task, local: true, class: "space-y-4" do |form| %>
+      <% if @task.errors.any? %>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+          <ul>
+            <% @task.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div>
+        <%= form.label :name, "Task Name", class: "block text-sm font-medium text-gray-700" %>
+        <%= form.text_field :name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+
+      <div>
+        <%= form.label :interval_type, "Interval", class: "block text-sm font-medium text-gray-700" %>
+        <%= form.select :interval_type,
+            options_for_select([
+              ["Daily", "daily"],
+              ["Weekly", "weekly"],
+              ["Monthly", "monthly"]
+            ], "weekly"),
+            {},
+            { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" } %>
+      </div>
+
+      <div class="flex gap-4">
+        <%= form.submit "Create Task", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+        <%= link_to "Cancel", root_path, class: "bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" %>
+      </div>
+    <% end %>
+  </div>
+</div>

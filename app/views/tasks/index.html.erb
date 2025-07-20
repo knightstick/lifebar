@@ -1,0 +1,31 @@
+<div class="min-h-screen bg-gray-50 py-12">
+  <div class="max-w-4xl mx-auto">
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">My Tasks</h1>
+      <%= link_to "Create New Task", new_task_path, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+    </div>
+
+    <% if notice %>
+      <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
+        <%= notice %>
+      </div>
+    <% end %>
+
+    <% if @tasks.any? %>
+      <div class="grid gap-4">
+        <% @tasks.each do |task| %>
+          <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-lg font-semibold text-gray-900"><%= task.name %></h3>
+            <p class="text-gray-600">Interval: <%= task.interval_type.capitalize %></p>
+            <p class="text-gray-500 text-sm">Created: <%= task.created_at.strftime("%B %d, %Y") %></p>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="text-center py-12">
+        <p class="text-gray-500 text-lg">No tasks yet. Create your first task to get started!</p>
+        <%= link_to "Create Task", new_task_path, class: "mt-4 inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+      </div>
+    <% end %>
+  </div>
+</div>
