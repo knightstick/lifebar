@@ -81,6 +81,12 @@ RSpec.describe Task, type: :model do
         task = Task.new(interval_type: "weekly", created_at: base_time, last_completed_at: nil)
         expect(task.next_due_date).to eq(base_time + 7.days)
       end
+
+      it "calculates correctly for daily tasks" do
+        creation_time = Time.parse("2025-01-14 12:00:00")
+        task = Task.create!(name: "Test task", interval_type: "daily", created_at: creation_time, last_completed_at: nil)
+        expect(task.next_due_date).to eq(creation_time + 1.day)
+      end
     end
 
     it "works with different interval types" do
@@ -115,6 +121,20 @@ RSpec.describe Task, type: :model do
     it "returns false when task is due exactly now" do
       task = Task.new(interval_type: "daily", last_completed_at: 1.day.ago)
       expect(task).not_to be_overdue
+    end
+
+    context "when task has never been completed" do
+      it "returns false for new task due in future" do
+        creation_time = Time.parse("2025-01-14 12:00:00")
+        task = Task.create!(name: "Test task", interval_type: "weekly", created_at: creation_time, last_completed_at: nil)
+        expect(task).not_to be_overdue
+      end
+
+      it "returns true for new task that is overdue" do
+        old_creation_time = Time.parse("2025-01-10 12:00:00")
+        task = Task.create!(name: "Test task", interval_type: "daily", created_at: old_creation_time, last_completed_at: nil)
+        expect(task).to be_overdue
+      end
     end
   end
 
@@ -169,6 +189,26 @@ RSpec.describe Task, type: :model do
         expect(task.status_text).to eq("Due now")
       end
     end
+
+    context "when task has never been completed" do
+      it "shows correct text for new task due in future" do
+        creation_time = Time.parse("2025-01-14 12:00:00")
+        task = Task.create!(name: "Test task", interval_type: "weekly", created_at: creation_time, last_completed_at: nil)
+        expect(task.status_text).to eq("Due in 6 days")
+      end
+
+      it "shows correct text for new task that is overdue" do
+        old_creation_time = Time.parse("2025-01-10 12:00:00")
+        task = Task.create!(name: "Test task", interval_type: "daily", created_at: old_creation_time, last_completed_at: nil)
+        expect(task.status_text).to eq("Overdue by 4 days")
+      end
+
+      it "shows correct text for new task due now" do
+        creation_time = Time.parse("2025-01-14 12:00:00")
+        task = Task.create!(name: "Test task", interval_type: "daily", created_at: creation_time, last_completed_at: nil)
+        expect(task.status_text).to eq("Due now")
+      end
+    end
   end
 
   describe "#status_color_class" do
@@ -201,68 +241,32 @@ RSpec.describe Task, type: :model do
       task = Task.new(interval_type: "weekly", last_completed_at: 1.day.ago)
       expect(task.status_color_class).to eq("status-green")
     end
+
+    context "when task has never been completed" do
+      it "returns green for new task due in future" do
+        creation_time = Time.parse("2025-01-14 12:00:00")
+        task = Task.create!(name: "Test task", interval_type: "weekly", created_at: creation_time, last_completed_at: nil)
+        expect(task.status_color_class).to eq("status-green")
+      end
+
+      it "returns red for new task that is overdue" do
+        old_creation_time = Time.parse("2025-01-10 12:00:00")
+        task = Task.create!(name: "Test task", interval_type: "daily", created_at: old_creation_time, last_completed_at: nil)
+        expect(task.status_color_class).to eq("status-red")
+      end
+
+      it "returns yellow for new task due now" do
+        creation_time = Time.parse("2025-01-14 12:00:00")
+        task = Task.create!(name: "Test task", interval_type: "daily", created_at: creation_time, last_completed_at: nil)
+        expect(task.status_color_class).to eq("status-yellow")
+      end
+    end
   end
 
   describe "initial state" do
     it "starts as not completed" do
       task = Task.create!(name: "Test task", interval_type: "weekly")
       expect(task.last_completed_at).to be_nil
-    end
-
-    context "with nil last_completed_at (never completed)" do
-      let(:current_time) { Time.parse("2025-01-15 12:00:00") }
-      let(:creation_time) { Time.parse("2025-01-14 12:00:00") }
-
-      before { travel_to(current_time) }
-      after { travel_back }
-
-      it "calculates next_due_date from creation time" do
-        task = Task.create!(name: "Test task", interval_type: "daily", created_at: creation_time, last_completed_at: nil)
-        expect(task.next_due_date).to eq(creation_time + 1.day)
-      end
-
-      it "shows correct status_text for new task due in future" do
-        task = Task.create!(name: "Test task", interval_type: "weekly", created_at: creation_time, last_completed_at: nil)
-        expect(task.status_text).to eq("Due in 6 days")
-      end
-
-      it "shows correct status_text for new task that is overdue" do
-        old_creation_time = Time.parse("2025-01-10 12:00:00")
-        task = Task.create!(name: "Test task", interval_type: "daily", created_at: old_creation_time, last_completed_at: nil)
-        expect(task.status_text).to eq("Overdue by 4 days")
-      end
-
-      it "shows correct status_text for new task due now" do
-        task = Task.create!(name: "Test task", interval_type: "daily", created_at: creation_time, last_completed_at: nil)
-        expect(task.status_text).to eq("Due now")
-      end
-
-      it "returns correct status_color_class for new task due in future" do
-        task = Task.create!(name: "Test task", interval_type: "weekly", created_at: creation_time, last_completed_at: nil)
-        expect(task.status_color_class).to eq("status-green")
-      end
-
-      it "returns correct status_color_class for new task that is overdue" do
-        old_creation_time = Time.parse("2025-01-10 12:00:00")
-        task = Task.create!(name: "Test task", interval_type: "daily", created_at: old_creation_time, last_completed_at: nil)
-        expect(task.status_color_class).to eq("status-red")
-      end
-
-      it "returns correct status_color_class for new task due now" do
-        task = Task.create!(name: "Test task", interval_type: "daily", created_at: creation_time, last_completed_at: nil)
-        expect(task.status_color_class).to eq("status-yellow")
-      end
-
-      it "returns correct overdue? status for new task due in future" do
-        task = Task.create!(name: "Test task", interval_type: "weekly", created_at: creation_time, last_completed_at: nil)
-        expect(task).not_to be_overdue
-      end
-
-      it "returns correct overdue? status for new task that is overdue" do
-        old_creation_time = Time.parse("2025-01-10 12:00:00")
-        task = Task.create!(name: "Test task", interval_type: "daily", created_at: old_creation_time, last_completed_at: nil)
-        expect(task).to be_overdue
-      end
     end
   end
 end
