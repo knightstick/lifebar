@@ -70,9 +70,9 @@ class Task < ApplicationRecord
     end
   end
 
-  def mark_completed!
+  def mark_completed!(completed_at = Time.current)
     ActiveRecord::Base.transaction do
-      completion = task_completions.create!(completed_at: Time.current)
+      completion = task_completions.create!(completed_at: completed_at)
       update!(last_completed_at: completion.completed_at)
     end
   end

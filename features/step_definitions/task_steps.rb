@@ -59,10 +59,10 @@ Given('I have a task {string} with {string} interval completed {string}') do |ta
   case time_ago
   when /(\d+) days? ago/
     days = $1.to_i
-    task.update!(last_completed_at: days.days.ago)
+    task.mark_completed!(days.days.ago)
   when /(\d+) hours? ago/
     hours = $1.to_i
-    task.update!(last_completed_at: hours.hours.ago)
+    task.mark_completed!(hours.hours.ago)
   end
 end
 
@@ -94,7 +94,8 @@ Then('I should see red status color for {string}') do |task_name|
   end
 end
 Given('I have a task {string} that was completed {int} days ago') do |task_name, days_ago|
-  Task.create!(name: task_name, interval_type: 'weekly', last_completed_at: days_ago.days.ago)
+  task = Task.create!(name: task_name, interval_type: 'weekly')
+  task.mark_completed!(days_ago.days.ago)
 end
 
 When('I visit the tasks page') do

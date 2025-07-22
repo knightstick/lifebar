@@ -71,7 +71,8 @@ RSpec.describe Task, type: :model do
 
     context "when task has been completed" do
       it "calculates next due date from last completion" do
-        task = Task.new(interval_type: "daily", last_completed_at: base_time)
+        task = Task.create!(name: "Test task", interval_type: "daily")
+        task.mark_completed!(base_time)
         expect(task.next_due_date).to eq(base_time + 1.day)
       end
     end
@@ -90,10 +91,15 @@ RSpec.describe Task, type: :model do
     end
 
     it "works with different interval types" do
-      daily_task = Task.new(interval_type: "daily", last_completed_at: base_time)
-      weekly_task = Task.new(interval_type: "weekly", last_completed_at: base_time)
-      monthly_task = Task.new(interval_type: "monthly", last_completed_at: base_time)
-      custom_task = Task.new(interval_type: "custom", interval_value: 3, last_completed_at: base_time)
+      daily_task = Task.create!(name: "Daily task", interval_type: "daily")
+      weekly_task = Task.create!(name: "Weekly task", interval_type: "weekly")
+      monthly_task = Task.create!(name: "Monthly task", interval_type: "monthly")
+      custom_task = Task.create!(name: "Custom task", interval_type: "custom", interval_value: 3)
+
+      daily_task.mark_completed!(base_time)
+      weekly_task.mark_completed!(base_time)
+      monthly_task.mark_completed!(base_time)
+      custom_task.mark_completed!(base_time)
 
       expect(daily_task.next_due_date).to eq(base_time + 1.day)
       expect(weekly_task.next_due_date).to eq(base_time + 7.days)
@@ -105,21 +111,27 @@ RSpec.describe Task, type: :model do
   describe "#overdue?" do
     let(:current_time) { Time.parse("2025-01-15 12:00:00") }
 
-    before { travel_to(current_time) }
-    after { travel_back }
+    around do |example|
+      travel_to(current_time) do
+        example.run
+      end
+    end
 
     it "returns true when task is overdue" do
-      task = Task.new(interval_type: "daily", last_completed_at: 2.days.ago)
+      task = Task.create!(name: "Test task", interval_type: "daily")
+      task.mark_completed!(2.days.ago)
       expect(task).to be_overdue
     end
 
     it "returns false when task is not overdue" do
-      task = Task.new(interval_type: "daily", last_completed_at: 12.hours.ago)
+      task = Task.create!(name: "Test task", interval_type: "daily")
+      task.mark_completed!(12.hours.ago)
       expect(task).not_to be_overdue
     end
 
     it "returns false when task is due exactly now" do
-      task = Task.new(interval_type: "daily", last_completed_at: 1.day.ago)
+      task = Task.create!(name: "Test task", interval_type: "daily")
+      task.mark_completed!(1.day.ago)
       expect(task).not_to be_overdue
     end
 
@@ -141,51 +153,62 @@ RSpec.describe Task, type: :model do
   describe "#status_text" do
     let(:current_time) { Time.parse("2025-01-15 12:00:00") }
 
-    before { travel_to(current_time) }
-    after { travel_back }
+    around do |example|
+      travel_to(current_time) do
+        example.run
+      end
+    end
 
     context "when task is overdue" do
       it "shows overdue by days" do
-        task = Task.new(interval_type: "daily", last_completed_at: 3.days.ago)
+        task = Task.create!(name: "Test task", interval_type: "daily")
+        task.mark_completed!(3.days.ago)
         expect(task.status_text).to eq("Overdue by 2 days")
       end
 
       it "shows overdue by single day" do
-        task = Task.new(interval_type: "daily", last_completed_at: 2.days.ago)
+        task = Task.create!(name: "Test task", interval_type: "daily")
+        task.mark_completed!(2.days.ago)
         expect(task.status_text).to eq("Overdue by 1 day")
       end
 
       it "shows 'Due now' when just overdue" do
-        task = Task.new(interval_type: "daily", last_completed_at: 25.hours.ago)
+        task = Task.create!(name: "Test task", interval_type: "daily")
+        task.mark_completed!(25.hours.ago)
         expect(task.status_text).to eq("Due now")
       end
     end
 
     context "when task is due in the future" do
       it "shows due in hours when less than a day" do
-        task = Task.new(interval_type: "daily", last_completed_at: 20.hours.ago)
+        task = Task.create!(name: "Test task", interval_type: "daily")
+        task.mark_completed!(20.hours.ago)
         expect(task.status_text).to eq("Due in 4 hours")
       end
 
       it "shows due in single hour" do
-        task = Task.new(interval_type: "daily", last_completed_at: 23.hours.ago)
+        task = Task.create!(name: "Test task", interval_type: "daily")
+        task.mark_completed!(23.hours.ago)
         expect(task.status_text).to eq("Due in 1 hour")
       end
 
       it "shows due in days when more than a day" do
-        task = Task.new(interval_type: "weekly", last_completed_at: 1.day.ago)
+        task = Task.create!(name: "Test task", interval_type: "weekly")
+        task.mark_completed!(1.day.ago)
         expect(task.status_text).to eq("Due in 6 days")
       end
 
       it "shows due in single day" do
-        task = Task.new(interval_type: "weekly", last_completed_at: 6.days.ago)
+        task = Task.create!(name: "Test task", interval_type: "weekly")
+        task.mark_completed!(6.days.ago)
         expect(task.status_text).to eq("Due in 1 day")
       end
     end
 
     context "when task is due exactly now" do
       it "shows 'Due now'" do
-        task = Task.new(interval_type: "daily", last_completed_at: 1.day.ago)
+        task = Task.create!(name: "Test task", interval_type: "daily")
+        task.mark_completed!(1.day.ago)
         expect(task.status_text).to eq("Due now")
       end
     end
@@ -214,31 +237,39 @@ RSpec.describe Task, type: :model do
   describe "#status_color_class" do
     let(:current_time) { Time.parse("2025-01-15 12:00:00") }
 
-    before { travel_to(current_time) }
-    after { travel_back }
+    around do |example|
+      travel_to(current_time) do
+        example.run
+      end
+    end
 
     it "returns red for overdue tasks" do
-      task = Task.new(interval_type: "daily", last_completed_at: 2.days.ago)
+      task = Task.create!(name: "Test task", interval_type: "daily")
+      task.mark_completed!(2.days.ago)
       expect(task.status_color_class).to eq("status-red")
     end
 
     it "returns yellow for tasks due within a day" do
-      task = Task.new(interval_type: "daily", last_completed_at: 20.hours.ago)
+      task = Task.create!(name: "Test task", interval_type: "daily")
+      task.mark_completed!(20.hours.ago)
       expect(task.status_color_class).to eq("status-yellow")
     end
 
     it "returns yellow for tasks due exactly now" do
-      task = Task.new(interval_type: "daily", last_completed_at: 1.day.ago)
+      task = Task.create!(name: "Test task", interval_type: "daily")
+      task.mark_completed!(1.day.ago)
       expect(task.status_color_class).to eq("status-yellow")
     end
 
     it "returns green for tasks due exactly in one day" do
-      task = Task.new(interval_type: "daily", last_completed_at: Time.current)
+      task = Task.create!(name: "Test task", interval_type: "daily")
+      task.mark_completed!(Time.current)
       expect(task.status_color_class).to eq("status-green")
     end
 
     it "returns green for tasks due in more than a day" do
-      task = Task.new(interval_type: "weekly", last_completed_at: 1.day.ago)
+      task = Task.create!(name: "Test task", interval_type: "weekly")
+      task.mark_completed!(1.day.ago)
       expect(task.status_color_class).to eq("status-green")
     end
 
@@ -279,14 +310,24 @@ end
       end
     end
 
-    it "updates last_completed_at to current time" do
-      task = Task.create!(name: "Test task", interval_type: "weekly", last_completed_at: 5.days.ago)
+    it "updates last_completed_at to current time by default" do
+      task = Task.create!(name: "Test task", interval_type: "weekly")
+      task.mark_completed!(5.days.ago) # Set initial completion
 
       expect { task.mark_completed! }.to change { task.reload.last_completed_at }
       expect(task.last_completed_at).to be_within(1.second).of(current_time)
     end
 
-    it "creates a TaskCompletion record" do
+    it "updates last_completed_at to specified time when provided" do
+      task = Task.create!(name: "Test task", interval_type: "weekly")
+      specified_time = 3.days.ago
+
+      task.mark_completed!(specified_time)
+
+      expect(task.reload.last_completed_at).to be_within(1.second).of(specified_time)
+    end
+
+    it "creates a TaskCompletion record with current time by default" do
       task = Task.create!(name: "Test task", interval_type: "weekly")
 
       expect { task.mark_completed! }.to change { task.task_completions.count }.by(1)
@@ -295,8 +336,19 @@ end
       expect(completion.completed_at).to be_within(1.second).of(current_time)
     end
 
+    it "creates a TaskCompletion record with specified time when provided" do
+      task = Task.create!(name: "Test task", interval_type: "weekly")
+      specified_time = 2.days.ago
+
+      task.mark_completed!(specified_time)
+
+      completion = task.task_completions.last
+      expect(completion.completed_at).to be_within(1.second).of(specified_time)
+    end
+
     it "ensures both operations happen atomically" do
-      task = Task.create!(name: "Test task", interval_type: "weekly", last_completed_at: 5.days.ago)
+      task = Task.create!(name: "Test task", interval_type: "weekly")
+      task.mark_completed!(5.days.ago) # Set initial completion
 
       # Mock TaskCompletion creation to fail
       allow(task.task_completions).to receive(:create!).and_raise(ActiveRecord::RecordInvalid.new(TaskCompletion.new))
@@ -310,10 +362,12 @@ end
 
     it "sets both timestamps to the same value" do
       task = Task.create!(name: "Test task", interval_type: "weekly")
+      specified_time = 1.day.ago
 
-      task.mark_completed!
+      task.mark_completed!(specified_time)
 
       completion = task.task_completions.last
       expect(task.reload.last_completed_at).to eq(completion.completed_at)
+      expect(completion.completed_at).to be_within(1.second).of(specified_time)
     end
   end
