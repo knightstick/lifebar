@@ -1,4 +1,6 @@
 class Task < ApplicationRecord
+  has_many :task_completions, dependent: :destroy
+
   validates :name, presence: true, length: { maximum: 255 }
   validates :interval_type, presence: true, inclusion: { in: %w[daily weekly monthly custom] }
   validates :interval_value, presence: true, numericality: { greater_than: 0 }, if: :custom_interval?
@@ -65,6 +67,13 @@ class Task < ApplicationRecord
       "status-yellow"
     when :on_track
       "status-green"
+    end
+  end
+
+  def mark_completed!
+    ActiveRecord::Base.transaction do
+      completion = task_completions.create!(completed_at: Time.current)
+      update!(last_completed_at: completion.completed_at)
     end
   end
 

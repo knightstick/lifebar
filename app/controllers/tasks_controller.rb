@@ -17,6 +17,16 @@ class TasksController < ApplicationController
     @tasks = Task.all
   end
 
+  def complete
+    @task = Task.find(params[:id])
+    @task.mark_completed!
+    redirect_to tasks_path, notice: "Task completed successfully"
+  rescue ActiveRecord::RecordNotFound
+    redirect_to tasks_path, alert: "Task not found"
+  rescue StandardError => e
+    redirect_to tasks_path, alert: "Error completing task: #{e.message}"
+  end
+
   private
 
   def task_params

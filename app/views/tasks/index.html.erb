@@ -11,14 +11,28 @@
       </div>
     <% end %>
 
+    <% if alert %>
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+        <%= alert %>
+      </div>
+    <% end %>
+
     <% if @tasks.any? %>
       <div class="grid gap-4">
         <% @tasks.each do |task| %>
           <div class="bg-white rounded-lg shadow-md p-6" data-task-name="<%= task.name %>">
-            <h3 class="text-lg font-semibold text-gray-900"><%= task.name %></h3>
-            <p class="text-gray-600">Interval: <%= task.interval_display %></p>
-            <p class="<%= task.status_color_class %> font-medium"><%= task.status_text %></p>
-            <p class="text-gray-500 text-sm">Created: <%= task.created_at.strftime("%B %d, %Y") %></p>
+            <div class="flex justify-between items-start">
+              <div class="flex-1">
+                <h3 class="text-lg font-semibold text-gray-900"><%= task.name %></h3>
+                <p class="text-gray-600">Interval: <%= task.interval_display %></p>
+                <p class="<%= task.status_color_class %> font-medium"><%= task.status_text %></p>
+                <p class="text-gray-500 text-sm">Created: <%= task.created_at.strftime("%B %d, %Y") %></p>
+              </div>
+              <div class="ml-4">
+                <%= link_to "Complete", complete_task_path(task), method: :patch,
+                    class: "bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" %>
+              </div>
+            </div>
           </div>
         <% end %>
       </div>

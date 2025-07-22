@@ -93,3 +93,38 @@ Then('I should see red status color for {string}') do |task_name|
     expect(page).to have_css('.status-red')
   end
 end
+Given('I have a task {string} that was completed {int} days ago') do |task_name, days_ago|
+  Task.create!(name: task_name, interval_type: 'weekly', last_completed_at: days_ago.days.ago)
+end
+
+When('I visit the tasks page') do
+  visit tasks_path
+end
+
+When('I click {string} next to {string}') do |button_text, task_name|
+  within("[data-task-name='#{task_name}']") do
+    click_link_or_button button_text
+  end
+end
+
+Then('I should be redirected to the tasks page') do
+  expect(current_path).to eq(tasks_path)
+end
+
+Then('I should see {string} with a green status') do |task_name|
+  within("[data-task-name='#{task_name}']") do
+    expect(page).to have_css('.status-green')
+  end
+end
+
+Then('the task should have an updated completion timestamp') do
+  # This step verifies that the task's last_completed_at was updated
+  # We'll check this by ensuring the task shows as recently completed
+  task = Task.find_by(name: "Water plants")
+  expect(task.last_completed_at).to be_within(1.minute).of(Time.current)
+
+  # Also verify that a TaskCompletion record was created
+  expect(task.task_completions.count).to be > 0
+  latest_completion = task.task_completions.order(:completed_at).last
+  expect(latest_completion.completed_at).to be_within(1.minute).of(Time.current)
+end
