@@ -61,15 +61,12 @@ class Task < ApplicationRecord
   def status_text
     case due_state
     when :overdue
-      days_overdue = (-time_until_due / 1.day).ceil
       "Overdue by #{days_overdue} #{'day'.pluralize(days_overdue)}"
     when :due_now
       "Due now"
     when :due_soon
-      hours_until_due = (time_until_due / 1.hour).ceil
       "Due in #{hours_until_due} #{'hour'.pluralize(hours_until_due)}"
     when :on_track
-      days_until_due = (time_until_due / 1.day).floor
       "Due in #{days_until_due} #{'day'.pluralize(days_until_due)}"
     end
   end
@@ -85,5 +82,19 @@ class Task < ApplicationRecord
     when :on_track
       "status-green"
     end
+  end
+
+  private
+
+  def hours_until_due
+    (time_until_due / 1.hour).ceil
+  end
+
+  def days_until_due
+    (hours_until_due / 24.0).floor
+  end
+
+  def days_overdue
+    (hours_until_due.abs / 24.0).ceil
   end
 end
