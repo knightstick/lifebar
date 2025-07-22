@@ -42,22 +42,6 @@ class Task < ApplicationRecord
     next_due_date < Time.current
   end
 
-  def time_until_due
-    @time_until_due ||= next_due_date - Time.current
-  end
-
-  def due_state
-    if time_until_due < -1.hour
-      :overdue
-    elsif time_until_due <= 0
-      :due_now
-    elsif time_until_due < 1.day
-      :due_soon
-    else
-      :on_track
-    end
-  end
-
   def status_text
     case due_state
     when :overdue
@@ -85,6 +69,22 @@ class Task < ApplicationRecord
   end
 
   private
+
+  def time_until_due
+    @time_until_due ||= next_due_date - Time.current
+  end
+
+  def due_state
+    if time_until_due < -1.hour
+      :overdue
+    elsif time_until_due <= 0
+      :due_now
+    elsif time_until_due < 1.day
+      :due_soon
+    else
+      :on_track
+    end
+  end
 
   def hours_until_due
     (time_until_due / 1.hour).ceil
