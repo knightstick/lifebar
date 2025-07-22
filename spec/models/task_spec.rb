@@ -118,20 +118,17 @@ RSpec.describe Task, type: :model do
     end
 
     it "returns true when task is overdue" do
-      task = Task.create!(name: "Test task", interval_type: "daily")
-      task.mark_completed!(2.days.ago)
+      task = create(:task, :daily, :completed, completed_at: 2.days.ago)
       expect(task).to be_overdue
     end
 
     it "returns false when task is not overdue" do
-      task = Task.create!(name: "Test task", interval_type: "daily")
-      task.mark_completed!(12.hours.ago)
+      task = create(:task, :daily, :completed, completed_at: 12.hours.ago)
       expect(task).not_to be_overdue
     end
 
     it "returns false when task is due exactly now" do
-      task = Task.create!(name: "Test task", interval_type: "daily")
-      task.mark_completed!(1.day.ago)
+      task = create(:task, :daily, :completed, completed_at: 1.day.ago)
       expect(task).not_to be_overdue
     end
 
@@ -161,54 +158,46 @@ RSpec.describe Task, type: :model do
 
     context "when task is overdue" do
       it "shows overdue by days" do
-        task = Task.create!(name: "Test task", interval_type: "daily")
-        task.mark_completed!(3.days.ago)
+        task = create(:task, :daily, :completed, completed_at: 3.days.ago)
         expect(task.status_text).to eq("Overdue by 2 days")
       end
 
       it "shows overdue by single day" do
-        task = Task.create!(name: "Test task", interval_type: "daily")
-        task.mark_completed!(2.days.ago)
+        task = create(:task, :daily, :completed, completed_at: 2.days.ago)
         expect(task.status_text).to eq("Overdue by 1 day")
       end
 
       it "shows 'Due now' when just overdue" do
-        task = Task.create!(name: "Test task", interval_type: "daily")
-        task.mark_completed!(25.hours.ago)
+        task = create(:task, :daily, :completed, completed_at: 25.hours.ago)
         expect(task.status_text).to eq("Due now")
       end
     end
 
     context "when task is due in the future" do
       it "shows due in hours when less than a day" do
-        task = Task.create!(name: "Test task", interval_type: "daily")
-        task.mark_completed!(20.hours.ago)
+        task = create(:task, :daily, :completed, completed_at: 20.hours.ago)
         expect(task.status_text).to eq("Due in 4 hours")
       end
 
       it "shows due in single hour" do
-        task = Task.create!(name: "Test task", interval_type: "daily")
-        task.mark_completed!(23.hours.ago)
+        task = create(:task, :daily, :completed, completed_at: 23.hours.ago)
         expect(task.status_text).to eq("Due in 1 hour")
       end
 
       it "shows due in days when more than a day" do
-        task = Task.create!(name: "Test task", interval_type: "weekly")
-        task.mark_completed!(1.day.ago)
+        task = create(:task, :weekly, :completed, completed_at: 1.day.ago)
         expect(task.status_text).to eq("Due in 6 days")
       end
 
       it "shows due in single day" do
-        task = Task.create!(name: "Test task", interval_type: "weekly")
-        task.mark_completed!(6.days.ago)
+        task = create(:task, :weekly, :completed, completed_at: 6.days.ago)
         expect(task.status_text).to eq("Due in 1 day")
       end
     end
 
     context "when task is due exactly now" do
       it "shows 'Due now'" do
-        task = Task.create!(name: "Test task", interval_type: "daily")
-        task.mark_completed!(1.day.ago)
+        task = create(:task, :daily, :completed, completed_at: 1.day.ago)
         expect(task.status_text).to eq("Due now")
       end
     end
@@ -244,32 +233,27 @@ RSpec.describe Task, type: :model do
     end
 
     it "returns red for overdue tasks" do
-      task = Task.create!(name: "Test task", interval_type: "daily")
-      task.mark_completed!(2.days.ago)
+      task = create(:task, :daily, :completed, completed_at: 2.days.ago)
       expect(task.status_color_class).to eq("status-red")
     end
 
     it "returns yellow for tasks due within a day" do
-      task = Task.create!(name: "Test task", interval_type: "daily")
-      task.mark_completed!(20.hours.ago)
+      task = create(:task, :daily, :completed, completed_at: 20.hours.ago)
       expect(task.status_color_class).to eq("status-yellow")
     end
 
     it "returns yellow for tasks due exactly now" do
-      task = Task.create!(name: "Test task", interval_type: "daily")
-      task.mark_completed!(1.day.ago)
+      task = create(:task, :daily, :completed, completed_at: 1.day.ago)
       expect(task.status_color_class).to eq("status-yellow")
     end
 
     it "returns green for tasks due exactly in one day" do
-      task = Task.create!(name: "Test task", interval_type: "daily")
-      task.mark_completed!(Time.current)
+      task = create(:task, :daily, :completed, completed_at: Time.current)
       expect(task.status_color_class).to eq("status-green")
     end
 
     it "returns green for tasks due in more than a day" do
-      task = Task.create!(name: "Test task", interval_type: "weekly")
-      task.mark_completed!(1.day.ago)
+      task = create(:task, :weekly, :completed, completed_at: 1.day.ago)
       expect(task.status_color_class).to eq("status-green")
     end
 
