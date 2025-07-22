@@ -270,3 +270,50 @@ RSpec.describe Task, type: :model do
     end
   end
 end
+  describe "#mark_completed!" do
+    let(:current_time) { Time.parse("2025-01-15 12:00:00") }
+
+    around do |example|
+      travel_to(current_time) do
+        example.run
+      end
+    end
+
+    it "updates last_completed_at to current time" do
+      task = Task.create!(name: "Test task", interval_type: "weekly", last_completed_at: 5.days.ago)
+
+      expect { task.mark_completed! }.to change { task.reload.last_completed_at }
+      expect(task.last_completed_at).to be_within(1.second).of(current_time)
+    end
+
+    it "creates a TaskCompletion record" do
+      task = Task.create!(name: "Test task", interval_type: "weekly")
+
+      expect { task.mark_completed! }.to change { task.task_completions.count }.by(1)
+
+      completion = task.task_completions.last
+      expect(completion.completed_at).to be_within(1.second).of(current_time)
+    end
+
+    it "ensures both operations happen atomically" do
+      task = Task.create!(name: "Test task", interval_type: "weekly", last_completed_at: 5.days.ago)
+
+      # Mock TaskCompletion creation to fail
+      allow(task.task_completions).to receive(:create!).and_raise(ActiveRecord::RecordInvalid.new(TaskCompletion.new))
+
+      expect { task.mark_completed! }.to raise_error(ActiveRecord::RecordInvalid)
+
+      # Verify that the task's last_completed_at was not updated due to rollback
+      task.reload
+      expect(task.last_completed_at).to be_within(1.second).of(5.days.ago)
+    end
+
+    it "sets both timestamps to the same value" do
+      task = Task.create!(name: "Test task", interval_type: "weekly")
+
+      task.mark_completed!
+
+      completion = task.task_completions.last
+      expect(task.reload.last_completed_at).to eq(completion.completed_at)
+    end
+  end

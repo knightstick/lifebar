@@ -10,7 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_20_015333) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_22_205209) do
+  create_table "task_completions", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "task_id", null: false
+    t.datetime "completed_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["completed_at"], name: "index_task_completions_on_completed_at"
+    t.index ["task_id"], name: "index_task_completions_on_task_id"
+  end
+
   create_table "tasks", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "interval_type", null: false
@@ -19,4 +28,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_20_015333) do
     t.datetime "updated_at", null: false
     t.integer "interval_value"
   end
+
+  add_foreign_key "task_completions", "tasks", on_delete: :cascade
 end
