@@ -42,37 +42,50 @@ class Task < ApplicationRecord
     next_due_date < Time.current
   end
 
-  def status_text
-    time_diff = next_due_date - Time.current
+  def time_until_due
+    @time_until_due ||= next_due_date - Time.current
+  end
 
-    if time_diff <= 0
-      hours_overdue = (-time_diff / 1.hour).ceil
+  def due_state
+    if time_until_due < 0
+      :overdue
+    elsif time_until_due < 1.day
+      :due_soon
+    else
+      :on_track
+    end
+  end
+
+  def status_text
+    case due_state
+    when :overdue
+      hours_overdue = (-time_until_due / 1.hour).ceil
       if hours_overdue <= 1
         "Due now"
       else
-        days_overdue = (-time_diff / 1.day).ceil
+        days_overdue = (-time_until_due / 1.day).ceil
         "Overdue by #{days_overdue} #{'day'.pluralize(days_overdue)}"
       end
-    else
-      hours_until_due = (time_diff / 1.hour).ceil
-      days_until_due = (time_diff / 1.day).floor
-
-      if days_until_due == 0
-        "Due in #{hours_until_due} #{'hour'.pluralize(hours_until_due)}"
+    when :due_soon
+      hours_until_due = (time_until_due / 1.hour).ceil
+      if hours_until_due <= 0
+        "Due now"
       else
-        "Due in #{days_until_due} #{'day'.pluralize(days_until_due)}"
+        "Due in #{hours_until_due} #{'hour'.pluralize(hours_until_due)}"
       end
+    when :on_track
+      days_until_due = (time_until_due / 1.day).floor
+      "Due in #{days_until_due} #{'day'.pluralize(days_until_due)}"
     end
   end
 
   def status_color_class
-    time_diff = next_due_date - Time.current
-
-    if time_diff < 0
+    case due_state
+    when :overdue
       "status-red"
-    elsif time_diff < 1.day
+    when :due_soon
       "status-yellow"
-    else
+    when :on_track
       "status-green"
     end
   end
