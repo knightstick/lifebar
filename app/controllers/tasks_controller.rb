@@ -23,9 +23,6 @@ class TasksController < ApplicationController
     redirect_to tasks_path, notice: "Task completed successfully"
   rescue ActiveRecord::RecordNotFound
     redirect_to tasks_path, alert: "Task not found"
-  rescue StandardError => e
-    Rails.logger.error "Error completing task #{params[:id]}: #{e.message}"
-    redirect_to tasks_path, alert: "Unable to complete task. Please try again."
   end
 
   private
