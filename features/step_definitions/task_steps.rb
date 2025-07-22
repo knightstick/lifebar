@@ -49,3 +49,47 @@ Then('I should see {string} as the interval for {string}') do |interval, task_na
     expect(page).to have_content(interval)
   end
 end
+
+Given('the current time is {string}') do |time_string|
+  travel_to Time.parse(time_string)
+end
+
+Given('I have a task {string} with {string} interval completed {string}') do |task_name, interval, time_ago|
+  task = Task.create!(name: task_name, interval_type: interval)
+  case time_ago
+  when /(\d+) days? ago/
+    days = $1.to_i
+    task.update!(last_completed_at: days.days.ago)
+  when /(\d+) hours? ago/
+    hours = $1.to_i
+    task.update!(last_completed_at: hours.hours.ago)
+  end
+end
+
+Given('I have a task {string} with {string} interval that was never completed') do |task_name, interval|
+  Task.create!(name: task_name, interval_type: interval, last_completed_at: nil)
+end
+
+Then('I should see {string} with status {string}') do |task_name, status|
+  within("[data-task-name='#{task_name}']") do
+    expect(page).to have_content(status)
+  end
+end
+
+Then('I should see green status color for {string}') do |task_name|
+  within("[data-task-name='#{task_name}']") do
+    expect(page).to have_css('.status-green')
+  end
+end
+
+Then('I should see yellow status color for {string}') do |task_name|
+  within("[data-task-name='#{task_name}']") do
+    expect(page).to have_css('.status-yellow')
+  end
+end
+
+Then('I should see red status color for {string}') do |task_name|
+  within("[data-task-name='#{task_name}']") do
+    expect(page).to have_css('.status-red')
+  end
+end

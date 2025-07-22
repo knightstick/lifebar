@@ -46,7 +46,7 @@
   - Make Cucumber feature pass with all interval types working
   - _Requirements: 1.1, 1.2, 1.3, 1.4_
 
-- [ ] 6. User can see basic task status (without visual bars yet)
+- [x] 6. User can see basic task status (without visual bars yet)
   - Write Cucumber feature: "User can see if tasks are due, overdue, or recently completed"
   - Add last_completed_at field to Task model
   - Implement next_due_date and overdue? methods on Task model

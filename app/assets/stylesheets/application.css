@@ -8,3 +8,16 @@
  *
  * Consider organizing styles into separate files for maintainability.
  */
+
+/* Task Status Colors */
+.status-green {
+  color: #10B981; /* Green-500 */
+}
+
+.status-yellow {
+  color: #F59E0B; /* Amber-500 */
+}
+
+.status-red {
+  color: #EF4444; /* Red-500 */
+}
