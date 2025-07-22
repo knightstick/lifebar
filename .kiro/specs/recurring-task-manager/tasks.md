@@ -55,7 +55,7 @@
   - Make Cucumber feature pass with working status display
   - _Requirements: 6.1, 6.6_
 
-- [ ] 7. User can mark tasks as complete
+- [x] 7. User can mark tasks as complete
   - Write Cucumber feature: "User can mark a task complete and see it reset"
   - Create TaskCompletion model and migration
   - Add complete action to TasksController

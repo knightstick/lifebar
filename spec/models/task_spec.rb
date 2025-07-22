@@ -273,8 +273,11 @@ end
   describe "#mark_completed!" do
     let(:current_time) { Time.parse("2025-01-15 12:00:00") }
 
-    before { travel_to(current_time) }
-    after { travel_back }
+    around do |example|
+      travel_to(current_time) do
+        example.run
+      end
+    end
 
     it "updates last_completed_at to current time" do
       task = Task.create!(name: "Test task", interval_type: "weekly", last_completed_at: 5.days.ago)
