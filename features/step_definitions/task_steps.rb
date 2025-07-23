@@ -15,7 +15,7 @@ Then('I should see {string} in my task list') do |task_name|
 end
 
 Given('I have created a task {string} with {string} interval') do |task_name, interval|
-  Task.create!(name: task_name, interval_type: interval)
+  create(:task, name: task_name, interval_type: interval)
 end
 
 Given('I visit the tasks dashboard') do
@@ -55,19 +55,18 @@ Given('the current time is {string}') do |time_string|
 end
 
 Given('I have a task {string} with {string} interval completed {string}') do |task_name, interval, time_ago|
-  task = Task.create!(name: task_name, interval_type: interval)
   case time_ago
   when /(\d+) days? ago/
     days = $1.to_i
-    task.update!(last_completed_at: days.days.ago)
+    create(:task, :completed, name: task_name, interval_type: interval, completed_at: days.days.ago)
   when /(\d+) hours? ago/
     hours = $1.to_i
-    task.update!(last_completed_at: hours.hours.ago)
+    create(:task, :completed, name: task_name, interval_type: interval, completed_at: hours.hours.ago)
   end
 end
 
 Given('I have a task {string} with {string} interval that was never completed') do |task_name, interval|
-  Task.create!(name: task_name, interval_type: interval, last_completed_at: nil)
+  create(:task, name: task_name, interval_type: interval, last_completed_at: nil)
 end
 
 Then('I should see {string} with status {string}') do |task_name, status|
@@ -94,7 +93,7 @@ Then('I should see red status color for {string}') do |task_name|
   end
 end
 Given('I have a task {string} that was completed {int} days ago') do |task_name, days_ago|
-  Task.create!(name: task_name, interval_type: 'weekly', last_completed_at: days_ago.days.ago)
+  create(:task, :weekly, :completed, name: task_name, completed_at: days_ago.days.ago)
 end
 
 When('I visit the tasks page') do

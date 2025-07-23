@@ -54,3 +54,6 @@ Cucumber::Rails::Database.javascript_strategy = :truncation
 
 # Include time travel helpers for testing
 World(ActiveSupport::Testing::TimeHelpers)
+
+# Include FactoryBot methods
+World(FactoryBot::Syntax::Methods)
