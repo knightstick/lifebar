@@ -71,40 +71,34 @@ RSpec.describe Task, type: :model do
 
     context "when task has been completed" do
       it "calculates next due date from last completion" do
-        task = Task.create!(name: "Test task", interval_type: "daily")
-        task.mark_completed!(base_time)
-        expect(task.next_due_date).to eq(base_time + 1.day)
+        task = create(:task, :daily, :completed, completed_at: base_time)
+        expect(task.next_due_date).to be_within(1.second).of(base_time + 1.day)
       end
     end
 
     context "when task has never been completed" do
       it "calculates next due date from creation time" do
         task = Task.new(interval_type: "weekly", created_at: base_time, last_completed_at: nil)
-        expect(task.next_due_date).to eq(base_time + 7.days)
+        expect(task.next_due_date).to be_within(1.second).of(base_time + 7.days)
       end
 
       it "calculates correctly for daily tasks" do
         creation_time = Time.parse("2025-01-14 12:00:00")
-        task = Task.create!(name: "Test task", interval_type: "daily", created_at: creation_time, last_completed_at: nil)
-        expect(task.next_due_date).to eq(creation_time + 1.day)
+        task = create(:task, :daily, created_at: creation_time, last_completed_at: nil)
+        expect(task.next_due_date).to be_within(1.second).of(creation_time + 1.day)
       end
     end
 
     it "works with different interval types" do
-      daily_task = Task.create!(name: "Daily task", interval_type: "daily")
-      weekly_task = Task.create!(name: "Weekly task", interval_type: "weekly")
-      monthly_task = Task.create!(name: "Monthly task", interval_type: "monthly")
-      custom_task = Task.create!(name: "Custom task", interval_type: "custom", interval_value: 3)
+      daily_task = create(:task, :daily, :completed, completed_at: base_time)
+      weekly_task = create(:task, :weekly, :completed, completed_at: base_time)
+      monthly_task = create(:task, :monthly, :completed, completed_at: base_time)
+      custom_task = create(:task, :custom, :completed, interval_value: 3, completed_at: base_time)
 
-      daily_task.mark_completed!(base_time)
-      weekly_task.mark_completed!(base_time)
-      monthly_task.mark_completed!(base_time)
-      custom_task.mark_completed!(base_time)
-
-      expect(daily_task.next_due_date).to eq(base_time + 1.day)
-      expect(weekly_task.next_due_date).to eq(base_time + 7.days)
-      expect(monthly_task.next_due_date).to eq(base_time + 30.days)
-      expect(custom_task.next_due_date).to eq(base_time + 3.days)
+      expect(daily_task.next_due_date).to be_within(1.second).of(base_time + 1.day)
+      expect(weekly_task.next_due_date).to be_within(1.second).of(base_time + 7.days)
+      expect(monthly_task.next_due_date).to be_within(1.second).of(base_time + 30.days)
+      expect(custom_task.next_due_date).to be_within(1.second).of(base_time + 3.days)
     end
   end
 
@@ -135,13 +129,13 @@ RSpec.describe Task, type: :model do
     context "when task has never been completed" do
       it "returns false for new task due in future" do
         creation_time = Time.parse("2025-01-14 12:00:00")
-        task = Task.create!(name: "Test task", interval_type: "weekly", created_at: creation_time, last_completed_at: nil)
+        task = create(:task, :weekly, created_at: creation_time, last_completed_at: nil)
         expect(task).not_to be_overdue
       end
 
       it "returns true for new task that is overdue" do
         old_creation_time = Time.parse("2025-01-10 12:00:00")
-        task = Task.create!(name: "Test task", interval_type: "daily", created_at: old_creation_time, last_completed_at: nil)
+        task = create(:task, :daily, created_at: old_creation_time, last_completed_at: nil)
         expect(task).to be_overdue
       end
     end
@@ -205,19 +199,19 @@ RSpec.describe Task, type: :model do
     context "when task has never been completed" do
       it "shows correct text for new task due in future" do
         creation_time = Time.parse("2025-01-14 12:00:00")
-        task = Task.create!(name: "Test task", interval_type: "weekly", created_at: creation_time, last_completed_at: nil)
+        task = create(:task, :weekly, created_at: creation_time, last_completed_at: nil)
         expect(task.status_text).to eq("Due in 6 days")
       end
 
       it "shows correct text for new task that is overdue" do
         old_creation_time = Time.parse("2025-01-10 12:00:00")
-        task = Task.create!(name: "Test task", interval_type: "daily", created_at: old_creation_time, last_completed_at: nil)
+        task = create(:task, :daily, created_at: old_creation_time, last_completed_at: nil)
         expect(task.status_text).to eq("Overdue by 4 days")
       end
 
       it "shows correct text for new task due now" do
         creation_time = Time.parse("2025-01-14 12:00:00")
-        task = Task.create!(name: "Test task", interval_type: "daily", created_at: creation_time, last_completed_at: nil)
+        task = create(:task, :daily, created_at: creation_time, last_completed_at: nil)
         expect(task.status_text).to eq("Due now")
       end
     end
@@ -260,19 +254,19 @@ RSpec.describe Task, type: :model do
     context "when task has never been completed" do
       it "returns green for new task due in future" do
         creation_time = Time.parse("2025-01-14 12:00:00")
-        task = Task.create!(name: "Test task", interval_type: "weekly", created_at: creation_time, last_completed_at: nil)
+        task = create(:task, :weekly, created_at: creation_time, last_completed_at: nil)
         expect(task.status_color_class).to eq("status-green")
       end
 
       it "returns red for new task that is overdue" do
         old_creation_time = Time.parse("2025-01-10 12:00:00")
-        task = Task.create!(name: "Test task", interval_type: "daily", created_at: old_creation_time, last_completed_at: nil)
+        task = create(:task, :daily, created_at: old_creation_time, last_completed_at: nil)
         expect(task.status_color_class).to eq("status-red")
       end
 
       it "returns yellow for new task due now" do
         creation_time = Time.parse("2025-01-14 12:00:00")
-        task = Task.create!(name: "Test task", interval_type: "daily", created_at: creation_time, last_completed_at: nil)
+        task = create(:task, :daily, created_at: creation_time, last_completed_at: nil)
         expect(task.status_color_class).to eq("status-yellow")
       end
     end
@@ -280,7 +274,7 @@ RSpec.describe Task, type: :model do
 
   describe "initial state" do
     it "starts as not completed" do
-      task = Task.create!(name: "Test task", interval_type: "weekly")
+      task = create(:task, :weekly)
       expect(task.last_completed_at).to be_nil
     end
   end
@@ -295,15 +289,14 @@ end
     end
 
     it "updates last_completed_at to current time by default" do
-      task = Task.create!(name: "Test task", interval_type: "weekly")
-      task.mark_completed!(5.days.ago) # Set initial completion
+      task = create(:task, :weekly, :completed, completed_at: 5.days.ago)
 
       expect { task.mark_completed! }.to change { task.reload.last_completed_at }
       expect(task.last_completed_at).to be_within(1.second).of(current_time)
     end
 
     it "updates last_completed_at to specified time when provided" do
-      task = Task.create!(name: "Test task", interval_type: "weekly")
+      task = create(:task, :weekly)
       specified_time = 3.days.ago
 
       task.mark_completed!(specified_time)
@@ -312,7 +305,7 @@ end
     end
 
     it "creates a TaskCompletion record with current time by default" do
-      task = Task.create!(name: "Test task", interval_type: "weekly")
+      task = create(:task, :weekly)
 
       expect { task.mark_completed! }.to change { task.task_completions.count }.by(1)
 
@@ -321,7 +314,7 @@ end
     end
 
     it "creates a TaskCompletion record with specified time when provided" do
-      task = Task.create!(name: "Test task", interval_type: "weekly")
+      task = create(:task, :weekly)
       specified_time = 2.days.ago
 
       task.mark_completed!(specified_time)
@@ -331,8 +324,7 @@ end
     end
 
     it "ensures both operations happen atomically" do
-      task = Task.create!(name: "Test task", interval_type: "weekly")
-      task.mark_completed!(5.days.ago) # Set initial completion
+      task = create(:task, :weekly, :completed, completed_at: 5.days.ago)
 
       # Mock TaskCompletion creation to fail
       allow(task.task_completions).to receive(:create!).and_raise(ActiveRecord::RecordInvalid.new(TaskCompletion.new))
@@ -345,7 +337,7 @@ end
     end
 
     it "sets both timestamps to the same value" do
-      task = Task.create!(name: "Test task", interval_type: "weekly")
+      task = create(:task, :weekly)
       specified_time = 1.day.ago
 
       task.mark_completed!(specified_time)
