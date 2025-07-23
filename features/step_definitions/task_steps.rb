@@ -127,3 +127,4 @@ Then('the task should have an updated completion timestamp') do
   latest_completion = task.task_completions.order(:completed_at).last
   expect(latest_completion.completed_at).to be_within(1.minute).of(Time.current)
 end
+

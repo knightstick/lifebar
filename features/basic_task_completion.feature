@@ -3,6 +3,7 @@ Feature: Basic Task Completion
   I want to mark tasks as complete
   So that I can reset their status bars and track my progress
 
+  @javascript
   Scenario: User marks a task complete and sees it reset
     Given I have a task "Water plants" that was completed 5 days ago
     When I visit the tasks page
