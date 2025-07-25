@@ -78,3 +78,5 @@ group :test do
   # Database cleaner for Cucumber feature specs
   gem "database_cleaner-active_record"
 end
+
+gem "chronic", "~> 0.10.2"

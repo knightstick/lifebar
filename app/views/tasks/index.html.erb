@@ -25,7 +25,10 @@
               <div class="flex-1">
                 <h3 class="text-lg font-semibold text-gray-900"><%= task.name %></h3>
                 <p class="text-gray-600">Interval: <%= task.interval_display %></p>
-                <p class="<%= task.status_color_class %> font-medium"><%= task.status_text %></p>
+                        <div class="status-bar w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+          <div class="#{task.status_color} h-2.5 rounded-full" style="width: #{task.completion_percentage}%"></div>
+        </div>
+        <span class="text-sm text-gray-500"><%= task.status_text %></span>
                 <p class="text-gray-500 text-sm">Created: <%= task.created_at.strftime("%B %d, %Y") %></p>
               </div>
               <div class="ml-4">

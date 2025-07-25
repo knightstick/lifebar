@@ -70,6 +70,29 @@ class Task < ApplicationRecord
     end
   end
 
+  def completion_percentage
+    # Represents the percentage of time *remaining* until the task is due.
+    time_remaining = next_due_date - Time.current
+    total_interval_seconds = interval_days.days.to_f
+
+    return 0 if time_remaining <= 0
+
+    percentage = (time_remaining / total_interval_seconds) * 100
+    [percentage, 100].min
+  end
+
+  def status_color
+    percentage = completion_percentage
+
+    if percentage == 0
+      "bg-red-500"
+    elsif percentage < 25
+      "bg-yellow-500"
+    else
+      "bg-green-500"
+    end
+  end
+
   def mark_completed!(completed_at = Time.current)
     ActiveRecord::Base.transaction do
       completion = task_completions.create!(completed_at: completed_at)
