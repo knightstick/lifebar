@@ -25,6 +25,16 @@
               <div class="flex-1">
                 <h3 class="text-lg font-semibold text-gray-900"><%= task.name %></h3>
                 <p class="text-gray-600">Interval: <%= task.interval_display %></p>
+                
+                <!-- Sims-style Status Bar -->
+                <div class="status-bar-container">
+                  <div class="status-bar-label">Status Progress</div>
+                  <div class="status-bar">
+                    <div class="status-bar-fill <%= task.status_bar_color_class %>" 
+                         style="width: <%= task.status_bar_percentage %>%;"></div>
+                  </div>
+                </div>
+                
                 <p class="<%= task.status_color_class %> font-medium"><%= task.status_text %></p>
                 <p class="text-gray-500 text-sm">Created: <%= task.created_at.strftime("%B %d, %Y") %></p>
               </div>

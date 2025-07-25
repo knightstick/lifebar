@@ -127,3 +127,63 @@ Then('the task should have an updated completion timestamp') do
   latest_completion = task.task_completions.order(:completed_at).last
   expect(latest_completion.completed_at).to be_within(1.minute).of(Time.current)
 end
+
+Given('I have a daily task called {string}') do |task_name|
+  create(:task, name: task_name, interval_type: 'daily')
+end
+
+Given('the task {string} was completed {int} hours ago') do |task_name, hours_ago|
+  task = Task.find_by(name: task_name)
+  task.mark_completed!(hours_ago.hours.ago)
+end
+
+Given('the task {string} was completed {int} days ago') do |task_name, days_ago|
+  task = Task.find_by(name: task_name)
+  task.mark_completed!(days_ago.days.ago)
+end
+
+Then('I should see a status bar for {string}') do |task_name|
+  within("[data-task-name='#{task_name}']") do
+    expect(page).to have_css('.status-bar')
+    expect(page).to have_css('.status-bar-fill')
+  end
+end
+
+Then('the status bar should be green') do
+  expect(page).to have_css('.status-bar-fill.bg-green-500, .status-bar-fill.bg-green-400')
+end
+
+Then('the status bar should be yellow') do
+  expect(page).to have_css('.status-bar-fill.bg-yellow-400')
+end
+
+Then('the status bar should be red') do
+  expect(page).to have_css('.status-bar-fill.bg-red-500')
+end
+
+Then('the status bar should be less than 25% filled') do
+  fill_element = page.find('.status-bar-fill')
+  width_style = fill_element[:style]
+  match = width_style.match(/width:\s*([\d\.e\-\+]+)%/)
+  expect(match).not_to be_nil, "Could not find width percentage in style: #{width_style}"
+  width_value = match[1].to_f
+  expect(width_value).to be < 25
+end
+
+Then('the status bar should be approximately 50% filled') do
+  fill_element = page.find('.status-bar-fill')
+  width_style = fill_element[:style]
+  match = width_style.match(/width:\s*([\d\.e\-\+]+)%/)
+  expect(match).not_to be_nil, "Could not find width percentage in style: #{width_style}"
+  width_value = match[1].to_f
+  expect(width_value).to be_between(45, 55)
+end
+
+Then('the status bar should be 100% filled') do
+  fill_element = page.find('.status-bar-fill')
+  width_style = fill_element[:style]
+  match = width_style.match(/width:\s*([\d\.e\-\+]+)%/)
+  expect(match).not_to be_nil, "Could not find width percentage in style: #{width_style}"
+  width_value = match[1].to_f
+  expect(width_value).to eq(100)
+end
