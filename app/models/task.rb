@@ -77,6 +77,30 @@ class Task < ApplicationRecord
     end
   end
 
+  def status_bar_percentage
+    time_since_last_completion = Time.current - (last_completed_at || created_at)
+    total_interval_seconds = interval_days.days.to_f
+
+    percentage = (time_since_last_completion / total_interval_seconds) * 100
+    [ [ percentage, 0 ].max, 100 ].min
+  end
+
+  def status_bar_color_class
+    percentage = status_bar_percentage
+
+    if percentage <= 25
+      "bg-green-500"
+    elsif percentage <= 50
+      "bg-green-400"
+    elsif percentage <= 75
+      "bg-yellow-400"
+    elsif percentage <= 90
+      "bg-orange-400"
+    else
+      "bg-red-500"
+    end
+  end
+
   private
 
   def time_until_due
