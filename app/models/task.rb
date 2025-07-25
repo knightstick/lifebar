@@ -78,17 +78,16 @@ class Task < ApplicationRecord
     return 0 if time_remaining <= 0
 
     percentage = (time_remaining / total_interval_seconds) * 100
-    [percentage, 100].min
+    [ percentage, 100 ].min
   end
 
   def status_color
-    percentage = completion_percentage
-
-    if percentage == 0
+    case due_state
+    when :overdue
       "bg-red-500"
-    elsif percentage < 25
+    when :due_now, :due_soon
       "bg-yellow-500"
-    else
+    when :on_track
       "bg-green-500"
     end
   end

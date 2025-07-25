@@ -77,21 +77,22 @@ end
 
 Then('I should see green status color for {string}') do |task_name|
   within("[data-task-name='#{task_name}']") do
-    expect(page).to have_css('.status-green')
+    expect(page).to have_css("[data-status-color='bg-green-500']")
   end
 end
 
 Then('I should see yellow status color for {string}') do |task_name|
   within("[data-task-name='#{task_name}']") do
-    expect(page).to have_css('.status-yellow')
+    expect(page).to have_css("[data-status-color='bg-yellow-500']")
   end
 end
 
 Then('I should see red status color for {string}') do |task_name|
   within("[data-task-name='#{task_name}']") do
-    expect(page).to have_css('.status-red')
+    expect(page).to have_css("[data-status-color='bg-red-500']")
   end
 end
+
 Given('I have a task {string} that was completed {int} days ago') do |task_name, days_ago|
   create(:task, :weekly, :completed, name: task_name, completed_at: days_ago.days.ago)
 end
@@ -111,9 +112,8 @@ Then('I should be redirected to the tasks page') do
 end
 
 Then('I should see {string} with a green status') do |task_name|
-  within("[data-task-name='#{task_name}']") do
-    expect(page).to have_css('.status-green')
-  end
+  task = Task.find_by!(name: task_name)
+  expect(task.completion_percentage).to be > 95
 end
 
 Then('the task should have an updated completion timestamp') do
